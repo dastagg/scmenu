@@ -1,0 +1,178 @@
+#!/bin/bash
+# A menu driven shell script to setup
+# Source Code Version Control.
+## ----------------------------------
+# Step #1: Define variables
+# ----------------------------------
+RED='\033[0;41;30m'
+STD='\033[0;0;39m'
+FOSHOME="$HOME/dev/.FOSSIL"
+# ----------------------------------
+# Step #2: User defined function
+# ----------------------------------
+pause(){
+  read -p "Press [Enter] key to continue..." fackEnterKey
+}
+
+one(){
+  echo "The default is in (), press Enter to accept."
+  read -p "Enter the Fossil Host name (vcs): " ORIGIN
+  ORIGIN=${ORIGIN:-vcs}
+
+  read -p "Enter the Fossil repo password (password): " FPASSWORD
+  FPASSWORD=${FPASSWORD:-password}
+
+  echo -n "Enter the project name: "
+  read -e PROJECT
+
+  if [ -z "$PROJECT" ]; then
+    echo "Project name cannot be blank!"
+    exit
+  fi
+
+  # setup the Fossil repository
+  fossil clone -A $USER http://root:$FPASSWORD@$ORIGIN/cgi-bin/fossil/$PROJECT $FOSHOME/$PROJECT.fsl
+
+  fossil open $FOSHOME/$PROJECT.fsl
+
+  pause
+}
+
+two(){
+  read -p "Enter the Gitolite Host name (opuspivcs): " ORIGIN
+  ORIGIN=${ORIGIN:-opuspivcs}
+
+  echo -n "Enter the project name: "
+  read -e PROJECT
+
+  if [ -z "$PROJECT" ]; then
+    echo "Project name cannot be blank!"
+    exit
+  fi
+
+  # setup the Gitolite repository
+  git remote add origin $ORIGIN:$PROJECT.git
+
+  # push develop, switch to master, push and switch back to develop.
+  git push -u origin develop
+  git checkout master
+  git push -u origin master
+  git checkout develop
+
+  pause
+}
+
+three(){
+  echo "The default is in (), press Enter to accept."
+  read -p "Enter the Github Host name (GHdastagg): " GITHUB
+  GITHUB=${GITHUB:-GHdastagg}
+
+  read -p "Enter the Github Userid (dastagg): " GHUSERNAME
+  GHUSERNAME=${GHUSERNAME:-dastagg}
+
+  echo -n "Enter the project name: "
+  read -e PROJECT
+
+  if [ -z "$PROJECT" ]; then
+    echo "Project name cannot be blank!"
+    exit
+  fi
+
+  # setup the Github repository
+  git remote add github $GITHUB:$GHUSERNAME/$PROJECT.git
+
+  # push develop, switch to master, push and switch back to develop.
+  git push -u github develop
+  git checkout master
+  git push -u github master
+  git checkout develop
+
+  pause
+}
+
+four(){
+  echo "The default is in (), press Enter to accept."
+  read -p "Enter the BitBucket Host name (BBdastagg): " BBUCKET
+  BBUCKET=${BBUCKET:-BBdastagg}
+
+  read -p "Enter the BitBucket Userid (dastagg): " BBUSERNAME
+  BBUSERNAME=${BBUSERNAME:-dastagg}
+
+  echo -n "Enter the project name: "
+  read -e PROJECT
+
+  if [ -z "$PROJECT" ]; then
+    echo "Project name cannot be blank!"
+    exit
+  fi
+
+  # setup the BitBucket repository
+  git remote add bbucket $BBUCKET:$BBUSERNAME/$PROJECT.git
+
+  # push develop, switch to master, push and switch back to develop.
+  git push -u bbucket develop
+  git checkout master
+  git push -u bbucket master
+  git checkout develop
+
+  pause
+}
+
+# function to display menus
+show_menus() {
+	clear
+	echo "~~~~~~~~~~~~~~~~~~~~~"
+	echo " Source Control Menu "
+	echo "~~~~~~~~~~~~~~~~~~~~~"
+	echo ""
+	echo "This little program will set up tracking branches on an external server (i.e. GitHub)."
+	echo ""
+	echo "For Git repositories:"
+	echo "It does assume that for Git repositories, an empty remote repository has already been created and"
+	echo "both a local master and develop branch have been created already and you run this when you are "
+	echo "in the develop branch."
+	echo ""
+	echo "For Fossil repositories:"
+	echo "It does assume that the Fossil repository is already created on the server and it will clone"
+	echo "it and create the link to the local repository located in $HOME/dev/.FOSSIL."
+	echo ""
+	echo ""
+  echo "Note: Setup the primary Git repository last!"
+	echo "~~~~~~~~~~~~~~~~~~~~~"
+  echo "1. Setup Fossil"
+  echo "2. Setup Gitolite"
+  echo "3. Setup GitHub"
+  echo "4. Setup Bitbucket"
+	echo "0. Exit"
+}
+# read input from the keyboard and take a action
+# invoke the one() when the user selects 1 from the menu option ... etc.
+# Exit when the user selects 0 from the menu option.
+# Display an error message if the user selects anything else.
+read_options(){
+	local choice
+	read -p "Enter choice [ 0 - 4] " choice
+	case $choice in
+		1) one ;;
+		2) two ;;
+		3) three ;;
+		4) four ;;
+		0) exit 0;;
+		*) echo -e "${RED}Error...${STD}" && sleep 2
+	esac
+}
+
+# ----------------------------------------------
+# Step #3: Trap CTRL+C, CTRL+Z and quit singles
+# ----------------------------------------------
+trap '' SIGINT SIGQUIT SIGTSTP
+
+# -----------------------------------
+# Step #4: Main logic - infinite loop
+# ------------------------------------
+while true
+do
+
+	show_menus
+	read_options
+done

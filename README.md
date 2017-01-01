@@ -8,7 +8,8 @@ NOTE: There are some "hardcoded" references. If you download it and use it, make
 For example: I have my own server running Gitolite so that remote is origin, GitHub is github and Bitbucket is bbucket.
 So after you run the script to link a GitHub repository, if you do a "git branch all" you will see something like:
 
-```* develop
+```
+* develop
   master
   remotes/github/develop
   remotes/github/master

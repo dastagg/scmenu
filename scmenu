@@ -142,6 +142,35 @@ five(){
   pause
 }
 
+six(){
+  echo "The default is in (), press Enter to accept."
+  read -p "Enter the Github Host name (GHdastagg): " GITHUB
+  GITHUB=${GITHUB:-GHdastagg}
+
+  read -p "Enter the Github Userid (dastagg): " GHUSERNAME
+  GHUSERNAME=${GHUSERNAME:-dastagg}
+
+  echo -n "Enter the project name: "
+  read -e PROJECT
+
+  if [ -z "$PROJECT" ]; then
+    echo "Project name cannot be blank!"
+    exit
+  fi
+
+  # setup the Github repository
+  git remote add github $GITHUB:$GHUSERNAME/$PROJECT.git
+
+  # push master, switch to gh-pages, push and switch back to master.
+  git push -u github master
+  git checkout gh-pages
+  git push -u github gh-pages
+  git checkout master
+
+  pause
+}
+
+
 # function to display menus
 show_menus() {
 	clear
@@ -165,9 +194,10 @@ show_menus() {
 	echo "~~~~~~~~~~~~~~~~~~~~~"
   echo "1. Setup Fossil"
   echo "2. Setup Gitolite"
-  echo "3. Setup GitHub"
-  echo "4. Setup Bitbucket"
+  echo "3. Setup GitHub (develop/master)"
+  echo "4. Setup Bitbucket(develop/master)"
   echo "5. Setup gh-pages"
+  echo "6. Setup GitHub (master/gh-pages)"
 	echo "0. Exit"
 }
 # read input from the keyboard and take a action
@@ -176,13 +206,14 @@ show_menus() {
 # Display an error message if the user selects anything else.
 read_options(){
 	local choice
-	read -p "Enter choice [ 0 - 5] " choice
+	read -p "Enter choice [ 0 - 6] " choice
 	case $choice in
 		1) one ;;
 		2) two ;;
 		3) three ;;
 		4) four ;;
-        5) five ;;
+		5) five ;;
+		6) six ;;
 		0) exit 0;;
 		*) echo -e "${RED}Error...${STD}" && sleep 2
 	esac
@@ -198,7 +229,6 @@ trap '' SIGINT SIGQUIT SIGTSTP
 # ------------------------------------
 while true
 do
-
 	show_menus
 	read_options
 done

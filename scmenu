@@ -7,6 +7,7 @@
 RED='\033[0;41;30m'
 STD='\033[0;0;39m'
 FOSHOME="$HOME/dev/.FOSSIL"
+FOSIGNORE="$HOME/dev/.fossil-settings"
 # ----------------------------------
 # Step #2: User defined function
 # ----------------------------------
@@ -34,6 +35,8 @@ one(){
   fossil clone -A $USER http://root:$FPASSWORD@$ORIGIN/cgi-bin/fossil/$PROJECT $FOSHOME/$PROJECT.fsl
 
   fossil open $FOSHOME/$PROJECT.fsl
+
+  cp -r $FOSIGNORE .
 
   pause
 }

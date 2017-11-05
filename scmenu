@@ -31,8 +31,12 @@ one(){
     exit
   fi
 
+  read -p "Enter the local Fossil repo username (dastagg): " USERNAME
+  USERNAME=${USERNAME:-dastagg}
+
+
   # setup the Fossil repository
-  fossil clone -A $USER http://root:$FPASSWORD@$ORIGIN/cgi-bin/fossil/$PROJECT $FOSHOME/$PROJECT.fsl
+  fossil clone -A $USERNAME http://root:$FPASSWORD@$ORIGIN/cgi-bin/fossil/$PROJECT $FOSHOME/$PROJECT.fsl
 
   fossil open $FOSHOME/$PROJECT.fsl
 

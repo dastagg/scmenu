@@ -17,8 +17,8 @@ pause(){
 
 one(){
   echo "The default is in (), press Enter to accept."
-  read -p "Enter the Fossil Host name (vcs): " ORIGIN
-  ORIGIN=${ORIGIN:-vcs}
+  read -p "Enter the Fossil Host name (dastagg.com): " ORIGIN
+  ORIGIN=${ORIGIN:-dastagg.com}
 
   read -p "Enter the Fossil repo password (password): " FPASSWORD
   FPASSWORD=${FPASSWORD:-password}
@@ -46,8 +46,9 @@ one(){
 }
 
 two(){
-  read -p "Enter the Gitolite Host name (opuspivcs): " ORIGIN
-  ORIGIN=${ORIGIN:-opuspivcs}
+  echo "Start in the master branch."
+  read -p "Enter the Gitolite Host name (dastagg.com): " ORIGIN
+  ORIGIN=${ORIGIN:-dastagg.com}
 
   echo -n "Enter the project name: "
   read -e PROJECT
@@ -60,16 +61,17 @@ two(){
   # setup the Gitolite repository
   git remote add origin $ORIGIN:$PROJECT.git
 
-  # push develop, switch to master, push and switch back to develop.
-  git push -u origin develop
-  git checkout master
+  # push master, switch to develop, push and switch back to master.
   git push -u origin master
   git checkout develop
+  git push -u origin develop
+  git checkout master
 
   pause
 }
 
 three(){
+  echo "Start in the master branch."
   echo "The default is in (), press Enter to accept."
   read -p "Enter the Github Host name (GHdastagg): " GITHUB
   GITHUB=${GITHUB:-GHdastagg}
@@ -88,16 +90,17 @@ three(){
   # setup the Github repository
   git remote add github $GITHUB:$GHUSERNAME/$PROJECT.git
 
-  # push develop, switch to master, push and switch back to develop.
-  git push -u github develop
-  git checkout master
+  # push master, switch to develop, push and switch back to master.
   git push -u github master
   git checkout develop
+  git push -u github develop
+  git checkout master
 
   pause
 }
 
 four(){
+  echo "Start in the master branch."
   echo "The default is in (), press Enter to accept."
   read -p "Enter the BitBucket Host name (BBdastagg): " BBUCKET
   BBUCKET=${BBUCKET:-BBdastagg}
@@ -116,16 +119,17 @@ four(){
   # setup the BitBucket repository
   git remote add bbucket $BBUCKET:$BBUSERNAME/$PROJECT.git
 
-  # push develop, switch to master, push and switch back to develop.
-  git push -u bbucket develop
-  git checkout master
+  # push master, switch to develop, push and switch back to master.
   git push -u bbucket master
   git checkout develop
+  git push -u bbucket develop
+  git checkout master
 
   pause
 }
 five(){
-  echo "This will set up the gh-pages branch"
+  echo "This will set up the gh-pages branch."
+  echo "Start in the master branch."
   echo "The default is in (), press Enter to accept."
   read -p "Enter the Github Host name (GHdastagg): " GITHUB
   GITHUB=${GITHUB:-GHdastagg}
@@ -141,15 +145,16 @@ five(){
     exit
   fi
 
-  # switch to gh-pages, push and switch back to develop.
+  # switch to gh-pages, push and switch back to master.
   git checkout gh-pages
   git push -u github gh-pages
-  git checkout develop
+  git checkout master
 
   pause
 }
 
 six(){
+  echo "Start in the master branch."
   echo "The default is in (), press Enter to accept."
   read -p "Enter the Github Host name (GHdastagg): " GITHUB
   GITHUB=${GITHUB:-GHdastagg}
@@ -189,8 +194,8 @@ show_menus() {
 	echo ""
 	echo "For Git repositories:"
 	echo "It does assume that for Git repositories, an empty remote repository has already been created and"
-	echo "both a local master and develop branch have been created already and you run this when you are "
-	echo "in the develop branch."
+	echo "both a local master and develop branch have been created and you run this when you are "
+	echo "in the master branch."
 	echo ""
 	echo "For Fossil repositories:"
 	echo "It does assume that the Fossil repository is already created on the server and it will clone"
@@ -201,8 +206,8 @@ show_menus() {
 	echo "~~~~~~~~~~~~~~~~~~~~~"
   echo "1. Setup Fossil"
   echo "2. Setup Gitolite"
-  echo "3. Setup GitHub (develop/master)"
-  echo "4. Setup Bitbucket(develop/master)"
+  echo "3. Setup GitHub (master/develop)"
+  echo "4. Setup Bitbucket(master/develop)"
   echo "5. Setup gh-pages"
   echo "6. Setup GitHub (master/gh-pages)"
 	echo "0. Exit"

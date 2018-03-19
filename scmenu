@@ -182,6 +182,25 @@ six(){
   pause
 }
 
+seven(){
+  echo "Start in the master branch."
+  echo "Paste (or type) the github repository that you forked from."
+  echo "Dont forget to include the .git at the end!"
+
+  echo -n "Enter the upstream repository: "
+  read -e PROJECT
+
+  if [ -z "$PROJECT" ]; then
+    echo "Repository name cannot be blank!"
+    exit
+  fi
+
+  # setup the Github repository
+  git remote add upstream $PROJECT
+
+  pause
+}
+
 
 # function to display menus
 show_menus() {
@@ -210,6 +229,7 @@ show_menus() {
   echo "4. Setup Bitbucket(master/develop)"
   echo "5. Setup gh-pages"
   echo "6. Setup GitHub (master/gh-pages)"
+  echo "7. Setup GitHub upstream repo"
 	echo "0. Exit"
 }
 # read input from the keyboard and take a action
@@ -218,7 +238,7 @@ show_menus() {
 # Display an error message if the user selects anything else.
 read_options(){
 	local choice
-	read -p "Enter choice [ 0 - 6] " choice
+	read -p "Enter choice [ 0 - 7] " choice
 	case $choice in
 		1) one ;;
 		2) two ;;
@@ -226,6 +246,7 @@ read_options(){
 		4) four ;;
 		5) five ;;
 		6) six ;;
+    7) seven ;;
 		0) exit 0;;
 		*) echo -e "${RED}Error...${STD}" && sleep 2
 	esac

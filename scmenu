@@ -17,8 +17,8 @@ pause(){
 
 one(){
   echo "The default is in (), press Enter to accept."
-  read -p "Enter the Fossil Host name (dastagg.com): " ORIGIN
-  ORIGIN=${ORIGIN:-dastagg.com}
+  read -p "Enter the Fossil Host name (staggsystems.net): " ORIGIN
+  ORIGIN=${ORIGIN:-staggsystems.net}
 
   read -p "Enter the Fossil repo password (password): " FPASSWORD
   FPASSWORD=${FPASSWORD:-password}
@@ -47,8 +47,8 @@ one(){
 
 two(){
   echo "Start in the master branch."
-  read -p "Enter the Gitolite Host name (dastagg.com): " ORIGIN
-  ORIGIN=${ORIGIN:-dastagg.com}
+  read -p "Enter the Gitolite Host name (gitstaggnet): " ORIGIN
+  ORIGIN=${ORIGIN:-gitstaggnet}
 
   echo -n "Enter the project name: "
   read -e PROJECT

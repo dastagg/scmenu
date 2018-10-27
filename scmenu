@@ -73,11 +73,11 @@ two(){
 three(){
   echo "Start in the master branch."
   echo "The default is in (), press Enter to accept."
-  read -p "Enter the Github Host name (GHdastagg): " GITHUB
-  GITHUB=${GITHUB:-GHdastagg}
+  read -p "Enter the GitLab Host name (GLdastagg): " GITLAB
+  GITLAB=${GITLAB:-GLdastagg}
 
-  read -p "Enter the Github Userid (dastagg): " GHUSERNAME
-  GHUSERNAME=${GHUSERNAME:-dastagg}
+  read -p "Enter the GitLab Userid (dastagg): " GLUSERNAME
+  GLUSERNAME=${GLUSERNAME:-dastagg}
 
   echo -n "Enter the project name: "
   read -e PROJECT
@@ -87,13 +87,13 @@ three(){
     exit
   fi
 
-  # setup the Github repository
-  git remote add github $GITHUB:$GHUSERNAME/$PROJECT.git
+  # setup the GitLab repository
+  git remote add gitlab $GITLAB:$GLUSERNAME/$PROJECT.git
 
   # push master, switch to develop, push and switch back to master.
-  git push -u github master
+  git push -u gitlab master
   git checkout develop
-  git push -u github develop
+  git push -u gitlab develop
   git checkout master
 
   pause
@@ -127,7 +127,39 @@ four(){
 
   pause
 }
+
 five(){
+  echo "Start in the master branch."
+  echo "The default is in (), press Enter to accept."
+  read -p "Enter the Github Host name (GHdastagg): " GITHUB
+  GITHUB=${GITHUB:-GHdastagg}
+
+  read -p "Enter the Github Userid (dastagg): " GHUSERNAME
+  GHUSERNAME=${GHUSERNAME:-dastagg}
+
+  echo -n "Enter the project name: "
+  read -e PROJECT
+
+  if [ -z "$PROJECT" ]; then
+    echo "Project name cannot be blank!"
+    exit
+  fi
+
+  # setup the Github repository
+  git remote add github $GITHUB:$GHUSERNAME/$PROJECT.git
+
+  # push master, switch to develop, push and switch back to master.
+  git push -u github master
+  git checkout develop
+  git push -u github develop
+  git checkout master
+
+  pause
+}
+
+
+
+six(){
   echo "This will set up the gh-pages branch."
   echo "Start in the master branch."
   echo "The default is in (), press Enter to accept."
@@ -153,7 +185,7 @@ five(){
   pause
 }
 
-six(){
+seven(){
   echo "Start in the master branch."
   echo "The default is in (), press Enter to accept."
   read -p "Enter the Github Host name (GHdastagg): " GITHUB
@@ -182,7 +214,7 @@ six(){
   pause
 }
 
-seven(){
+eight(){
   echo "Start in the master branch."
   echo "Paste (or type) the github repository that you forked from."
   echo "Dont forget to include the .git at the end!"
@@ -225,11 +257,13 @@ show_menus() {
 	echo "~~~~~~~~~~~~~~~~~~~~~"
   echo "1. Setup Fossil"
   echo "2. Setup Gitolite"
-  echo "3. Setup GitHub (master/develop)"
+  echo "3. Setup GitLab (master/develop)"
   echo "4. Setup Bitbucket(master/develop)"
-  echo "5. Setup gh-pages"
-  echo "6. Setup GitHub (master/gh-pages)"
-  echo "7. Setup GitHub upstream repo"
+  echo "--- GitHub stuff - maybe not so useful any more?"
+  echo "5. Setup GitHub (master/develop)"
+  echo "6. Setup gh-pages"
+  echo "7. Setup GitHub (master/gh-pages)"
+  echo "8. Setup GitHub upstream repo"
 	echo "0. Exit"
 }
 # read input from the keyboard and take a action
@@ -246,7 +280,8 @@ read_options(){
 		4) four ;;
 		5) five ;;
 		6) six ;;
-    7) seven ;;
+		7) seven ;;
+		8) eight ;;
 		0) exit 0;;
 		*) echo -e "${RED}Error...${STD}" && sleep 2
 	esac

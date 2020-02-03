@@ -6,8 +6,9 @@
 # ----------------------------------
 RED='\033[0;41;30m'
 STD='\033[0;0;39m'
-FOSHOME="$HOME/dev/.FOSSIL"
-FOSIGNORE="$HOME/dev/.fossil-settings"
+FOSHOME="$HOME/dev/FOSSIL"
+FOSIGNORE="$HOME/dev/FOSSIL/.fossil-settings"
+FOSTICKET="$HOME/dev/FOSSIL/fossil-files/ticket.config"
 # ----------------------------------
 # Step #2: User defined function
 # ----------------------------------
@@ -15,7 +16,44 @@ pause(){
   read -p "Press [Enter] key to continue..." fackEnterKey
 }
 
-one(){
+fossil-local(){
+  echo "Project name must be lower case."
+  echo -n "Enter the project name: "
+  read -e PROJECT
+
+  if [ -z "$PROJECT" ]; then
+    echo "Project name cannot be blank!"
+    exit
+  fi
+
+  # setup the Fossil repository
+  fossil init "$FOSHOME/$PROJECT.fsl"
+  fossil config import $FOSTICKET -R "$FOSHOME/$PROJECT.fsl"
+
+  fossil open "$FOSHOME/$PROJECT.fsl"
+
+  cp -r $FOSIGNORE .
+
+  pause
+}
+
+git-local(){
+  echo "This will initialize the git repository."
+  echo "Add all the files,"
+  echo "then Commit all the files using,"
+  echo "'Initial Commit' as the commit message."
+
+  # setup the Git repository
+  git init 
+
+  git add -A
+
+  git commit -m "Initial Commit"
+
+  pause
+}
+
+fossil-server(){
   echo "The default is in (), press Enter to accept."
   read -p "Enter the Fossil Host name (staggsystems.net): " ORIGIN
   ORIGIN=${ORIGIN:-staggsystems.net}
@@ -34,21 +72,18 @@ one(){
   read -p "Enter the local Fossil repo username (dastagg): " USERNAME
   USERNAME=${USERNAME:-dastagg}
 
-
   # setup the Fossil repository
-  fossil clone -A $USERNAME http://root:$FPASSWORD@$ORIGIN/cgi-bin/fossil/$PROJECT $FOSHOME/$PROJECT.fsl
+  fossil clone -A $USERNAME "http://root:$FPASSWORD@$ORIGIN/cgi-bin/fossil/$PROJECT" "$FOSHOME/$PROJECT.fsl"
 
-  fossil open $FOSHOME/$PROJECT.fsl
-
-  cp -r $FOSIGNORE .
+  fossil open "$FOSHOME/$PROJECT.fsl"
 
   pause
 }
 
-two(){
-  echo "Start in the master branch."
-  read -p "Enter the Gitolite Host name (gitstaggnet): " ORIGIN
-  ORIGIN=${ORIGIN:-gitstaggnet}
+gitolite-mo(){
+  echo "This version only pushes the master branch."
+  read -p "Enter the Gitolite Host name (scm.dastagg.local): " ORIGIN
+  ORIGIN=${ORIGIN:-scm.dastagg.local}
 
   echo -n "Enter the project name: "
   read -e PROJECT
@@ -59,7 +94,29 @@ two(){
   fi
 
   # setup the Gitolite repository
-  git remote add origin $ORIGIN:$PROJECT.git
+  git remote add origin "$ORIGIN:$PROJECT.git"
+
+  git push -u origin master
+
+  pause
+}
+
+gitolite-md(){
+  echo "Start in the master branch."
+  echo "The default is in (), press Enter to accept."
+  read -p "Enter the Gitolite Host name (scm.dastagg.local): " ORIGIN
+  ORIGIN=${ORIGIN:-scm.dastagg.local}
+
+  echo -n "Enter the project name: "
+  read -e PROJECT
+
+  if [ -z "$PROJECT" ]; then
+    echo "Project name cannot be blank!"
+    exit
+  fi
+
+  # setup the Gitolite repository
+  git remote add origin "$ORIGIN:$PROJECT.git"
 
   # push master, switch to develop, push and switch back to master.
   git push -u origin master
@@ -70,7 +127,32 @@ two(){
   pause
 }
 
-three(){
+gitlab-mo() {
+  echo "This version only pushes the master branch."
+  echo "The default is in (), press Enter to accept."
+  read -p "Enter the GitLab Host name (GLdastagg): " GITLAB
+  GITLAB=${GITLAB:-GLdastagg}
+
+  read -p "Enter the GitLab Userid (dastagg): " GLUSERNAME
+  GLUSERNAME=${GLUSERNAME:-dastagg}
+
+  echo -n "Enter the project name: "
+  read -e PROJECT
+
+  if [ -z "$PROJECT" ]; then
+    echo "Project name cannot be blank!"
+    exit
+  fi
+
+  # setup the GitLab repository
+  git remote add gitlab $GITLAB:$GLUSERNAME/$PROJECT.git
+
+  git push -u gitlab master
+
+  pause
+}
+
+gitlab-md(){
   echo "Start in the master branch."
   echo "The default is in (), press Enter to accept."
   read -p "Enter the GitLab Host name (GLdastagg): " GITLAB
@@ -99,7 +181,32 @@ three(){
   pause
 }
 
-four(){
+bitbucket-mo(){
+  echo "This version only pushes the master branch."
+  echo "The default is in (), press Enter to accept."
+  read -p "Enter the BitBucket Host name (BBdastagg): " BBUCKET
+  BBUCKET=${BBUCKET:-BBdastagg}
+
+  read -p "Enter the BitBucket Userid (dastagg): " BBUSERNAME
+  BBUSERNAME=${BBUSERNAME:-dastagg}
+
+  echo -n "Enter the project name: "
+  read -e PROJECT
+
+  if [ -z "$PROJECT" ]; then
+    echo "Project name cannot be blank!"
+    exit
+  fi
+
+  # setup the BitBucket repository
+  git remote add bbucket $BBUCKET:$BBUSERNAME/$PROJECT.git
+
+  git push -u bbucket master
+
+  pause
+}
+
+bitbucket-md(){
   echo "Start in the master branch."
   echo "The default is in (), press Enter to accept."
   read -p "Enter the BitBucket Host name (BBdastagg): " BBUCKET
@@ -128,7 +235,32 @@ four(){
   pause
 }
 
-five(){
+github-mo(){
+  echo "This version only pushes the master branch."
+  echo "The default is in (), press Enter to accept."
+  read -p "Enter the Github Host name (GHdastagg): " GITHUB
+  GITHUB=${GITHUB:-GHdastagg}
+
+  read -p "Enter the Github Userid (dastagg): " GHUSERNAME
+  GHUSERNAME=${GHUSERNAME:-dastagg}
+
+  echo -n "Enter the project name: "
+  read -e PROJECT
+
+  if [ -z "$PROJECT" ]; then
+    echo "Project name cannot be blank!"
+    exit
+  fi
+
+  # setup the Github repository
+  git remote add github $GITHUB:$GHUSERNAME/$PROJECT.git
+
+  git push -u github master
+
+  pause
+}
+
+github-md(){
   echo "Start in the master branch."
   echo "The default is in (), press Enter to accept."
   read -p "Enter the Github Host name (GHdastagg): " GITHUB
@@ -158,65 +290,9 @@ five(){
 }
 
 
-
-six(){
-  echo "This will set up the gh-pages branch."
-  echo "Start in the master branch."
-  echo "The default is in (), press Enter to accept."
-  read -p "Enter the Github Host name (GHdastagg): " GITHUB
-  GITHUB=${GITHUB:-GHdastagg}
-
-  read -p "Enter the Github Userid (dastagg): " GHUSERNAME
-  GHUSERNAME=${GHUSERNAME:-dastagg}
-
-  echo -n "Enter the project name: "
-  read -e PROJECT
-
-  if [ -z "$PROJECT" ]; then
-    echo "Project name cannot be blank!"
-    exit
-  fi
-
-  # switch to gh-pages, push and switch back to master.
-  git checkout gh-pages
-  git push -u github gh-pages
-  git checkout master
-
-  pause
-}
-
-seven(){
-  echo "Start in the master branch."
-  echo "The default is in (), press Enter to accept."
-  read -p "Enter the Github Host name (GHdastagg): " GITHUB
-  GITHUB=${GITHUB:-GHdastagg}
-
-  read -p "Enter the Github Userid (dastagg): " GHUSERNAME
-  GHUSERNAME=${GHUSERNAME:-dastagg}
-
-  echo -n "Enter the project name: "
-  read -e PROJECT
-
-  if [ -z "$PROJECT" ]; then
-    echo "Project name cannot be blank!"
-    exit
-  fi
-
-  # setup the Github repository
-  git remote add github $GITHUB:$GHUSERNAME/$PROJECT.git
-
-  # push master, switch to gh-pages, push and switch back to master.
-  git push -u github master
-  git checkout gh-pages
-  git push -u github gh-pages
-  git checkout master
-
-  pause
-}
-
-eight(){
-  echo "Start in the master branch."
-  echo "Paste (or type) the github repository that you forked from."
+upstream(){
+  echo "This will add a repository as an upstream remote"
+  echo "Paste (or type) the repository that you forked from."
   echo "Dont forget to include the .git at the end!"
 
   echo -n "Enter the upstream repository: "
@@ -227,7 +303,7 @@ eight(){
     exit
   fi
 
-  # setup the Github repository
+  # setup the upstream repository
   git remote add upstream $PROJECT
 
   pause
@@ -236,55 +312,70 @@ eight(){
 
 # function to display menus
 show_menus() {
-	clear
-	echo "~~~~~~~~~~~~~~~~~~~~~"
-	echo " Source Control Menu "
-	echo "~~~~~~~~~~~~~~~~~~~~~"
-	echo ""
-	echo "This little program will set up tracking branches on an external server (i.e. GitHub)."
-	echo ""
-	echo "For Git repositories:"
-	echo "It does assume that for Git repositories, an empty remote repository has already been created and"
-	echo "both a local master and develop branch have been created and you run this when you are "
-	echo "in the master branch."
-	echo ""
-	echo "For Fossil repositories:"
-	echo "It does assume that the Fossil repository is already created on the server and it will clone"
-	echo "it and create the link to the local repository located in $HOME/dev/.FOSSIL."
-	echo ""
-	echo ""
-  echo "Note: Setup the primary Git repository last!"
-	echo "~~~~~~~~~~~~~~~~~~~~~"
-  echo "1. Setup Fossil"
-  echo "2. Setup Gitolite"
-  echo "3. Setup GitLab (master/develop)"
-  echo "4. Setup Bitbucket(master/develop)"
-  echo "--- GitHub stuff - maybe not so useful any more?"
-  echo "5. Setup GitHub (master/develop)"
-  echo "6. Setup gh-pages"
-  echo "7. Setup GitHub (master/gh-pages)"
-  echo "8. Setup GitHub upstream repo"
-	echo "0. Exit"
+  clear
+  echo "~~~~~~~~~~~~~~~~~~~~~"
+  echo " Source Control Menu "
+  echo "~~~~~~~~~~~~~~~~~~~~~"
+  echo ""
+  echo "For Git repositories:"
+  echo "It does assume that for Remote Git repositories, an empty remote repository has already been created."
+  echo ""
+  echo "For Fossil repositories:"
+  echo "It does assume that the Fossil repository has been moved to the server"
+  echo "This will clone it and create the link to the local repository located in $HOME/dev/.FOSSIL."
+  echo ""
+  echo "Note: You can use this to setup multiple repositories."
+  echo "      BUT: Setup the primary Git repository last!"
+  echo "~~~~~~~~~~~~~~~~~~~~~"
+  echo ""
+  echo "Internal ---"
+  echo "  f - Setup Fossil Local"
+  echo "  g - Setup Git Local"
+  echo ""
+  echo "External ---"
+  echo "  F - Setup Fossil Remote"
+  echo "  Gm - Setup Gitolite - master branch only"
+  echo "  Gd - Setup Gitolite - master/develop branches"
+  echo ""
+  echo "GitHub ---"
+  echo "  Hm - Setup GitHub - master branch only"
+  echo "  Hd - Setup GitHub - master/develop branches"
+  echo "GitLab ---"
+  echo "  Lm - Setup GitLab - master branch only"
+  echo "  Ld - Setup GitLab - master/develop branches"
+  echo "BitBucket ---"
+  echo "  Bm - Setup Bitbucket - master branch only"
+  echo "  Bd - Setup Bitbucket - master/develop branches"
+  echo ""
+  echo "Upstream Repository ---"
+  echo "  U - Setup a Git upstream repo"
+  echo ""
+  echo "Get me out of here! ---"
+  echo "  0 (<- zero) - Exit"
 }
 # read input from the keyboard and take a action
 # invoke the one() when the user selects 1 from the menu option ... etc.
 # Exit when the user selects 0 from the menu option.
 # Display an error message if the user selects anything else.
-read_options(){
-	local choice
-	read -p "Enter choice [ 0 - 7] " choice
-	case $choice in
-		1) one ;;
-		2) two ;;
-		3) three ;;
-		4) four ;;
-		5) five ;;
-		6) six ;;
-		7) seven ;;
-		8) eight ;;
-		0) exit 0;;
-		*) echo -e "${RED}Error...${STD}" && sleep 2
-	esac
+read_options() {
+  local choice
+  read -p "Enter choice " choice
+  case $choice in
+    f) fossil-local ;;
+    g) git-local ;;
+    F) fossil-server ;;
+    Gm) gitolite-mo ;;
+    Gd) gitolite-md ;;
+    Hm) github-mo ;;
+    Hd) github-md ;;
+    Lm) gitlab-mo ;;
+    Ld) gitlab-md ;;
+    Bm) bitbucket-mo ;;
+    Bd) bitbucket-md ;;
+    U) upstream ;;
+    0) exit 0 ;;
+    *) echo -e "${RED}Error...${STD}" && sleep 2
+  esac
 }
 
 # ----------------------------------------------
@@ -297,6 +388,6 @@ trap '' SIGINT SIGQUIT SIGTSTP
 # ------------------------------------
 while true
 do
-	show_menus
-	read_options
+  show_menus
+  read_options
 done
